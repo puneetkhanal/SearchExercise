@@ -14,13 +14,13 @@ class QueryProcessor {
 	
     // replaces unwanted whitespaces
     static def parseQuery(def searchString){
-        return searchString.replaceAll("\\s+"," ")
+        return searchString.replaceAll("\\s+"," ").toLowerCase()
     }
     
     // applies regex character to match multiple whitespace
     static def preProcessForReplace(def searchString){
         def terms=searchString.split(' ')
-        def strBuilder=new StringBuilder()
+        def strBuilder=new StringBuilder('(?i)')
         def i=0;
         for(;i<terms.size();i++){
             if(i<terms.size()-1){
@@ -29,7 +29,7 @@ class QueryProcessor {
                 strBuilder.append(terms.getAt(i));
             }
         }
-        return strBuilder.toString()
+        return strBuilder.toString().toLowerCase()
     }
 }
 

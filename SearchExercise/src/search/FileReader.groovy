@@ -21,7 +21,6 @@ class FileReader {
     def indexService
 	
     def readFromDirectory(def directoryPath){
-        
         def list = []
         def dir = new File(directoryPath)
         dir.eachFileRecurse (FileType.FILES) { file ->
@@ -73,11 +72,13 @@ class FileReader {
         return postings
     }
     
+    // Replaces text in the file
     def processFileInplace(file, Closure processText) {
         def text = file.text
         file.write(processText(text))
     }
     
+    // Creates backup of the file
     def copy(File src,File dest){
         def input = src.newDataInputStream()
 	def output = dest.newDataOutputStream()
@@ -89,6 +90,9 @@ class FileReader {
     }
     
     def processResults(def results,def searchString,def replaceString,def outputFile){
+        if(results.size()==0){
+            log.info "No results found."
+        }
         def changedFiles=new HashSet()
         for(currentResult in results){
             log.info 'Search String \''+searchString+'\' found at lineNumber: '+currentResult['lineNumber']+' columnNumber: '+currentResult['start']+' in document:' +currentResult['document']
@@ -105,7 +109,6 @@ class FileReader {
     
     def outputChangedFiles(def changedFiles,def outputFile){
         File file = new File(outputFile)
-
         changedFiles.each {
             file << it+"\n"
         }
@@ -127,6 +130,10 @@ class FileReader {
     
     def processResults(def results,def searchString,def replaceString){
         processResults(results,searchString,replaceString,null)
+    }
+    
+    def processResults(def results,def searchString){
+        processResults(results,searchString,null,null)
     }
 }
 

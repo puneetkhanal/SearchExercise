@@ -30,6 +30,7 @@ class Indexer {
     }
     
     def search(def searchText){
+        log.info "Executing search: "+searchText
         def terms=searchText.split(" ")
         def firstPostingsList=map[terms[0]]
         def results=[]
