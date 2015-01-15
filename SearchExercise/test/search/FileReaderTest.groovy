@@ -4,7 +4,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+package search
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
@@ -72,10 +72,10 @@ class FileReaderTest {
         def indexService=new Indexer()
         fileReader.setIndexService(indexService)
         fileReader.readFromDirectory('data')
-        def searchString='doug cuttings'
+        def searchString='doug cutting'
         def results=indexService.search(searchString)
         
-        fileReader.processResults(results,searchString,'doug cutting','data/changedFiles.txt')
+        fileReader.processResults(results,searchString,'doug cuttings','data/changedFiles.txt')
     }
     
     
