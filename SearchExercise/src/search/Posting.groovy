@@ -17,6 +17,7 @@ class Posting {
     def start
     def end
     def next
+    def lineNumber;
     
 }
 
