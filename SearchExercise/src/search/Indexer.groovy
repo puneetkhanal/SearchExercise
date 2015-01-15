@@ -34,9 +34,8 @@ class Indexer {
                 def eachPostingsList=map[terms[i]]
                 def match=false
                 for(eachPosting in eachPostingsList){
-                    println currentPosting['document']+":"+eachPosting['document']
+//                    println currentPosting['document']+":"+eachPosting['document']
                     if(currentPosting['document']==eachPosting['document']&&currentPosting['end']+2==eachPosting['start']){
-                        println 'match'
                         match=true;
                         currentPosting.setNext(eachPosting)
                         currentPosting=eachPosting
@@ -44,7 +43,6 @@ class Indexer {
                     }
                 }
                 if(!match){
-                    println 'no match found so break'
                     break;
                 }
                

@@ -50,7 +50,6 @@ class FileReader {
             posting.setLineNumber(lineNumber)
             start=start+word.length()+2
             if(indexService!=null){
-                println 'indexing'
                 indexService.index(posting)
             }
             postings.add(posting)
@@ -73,21 +72,47 @@ class FileReader {
 	output.close()
     }
     
-    def processResults(def results,def searchString){
-        for(result in results){
-            def currentResult=result
-            println 'Search String \''+searchString+'\' found in document: '+result['document']
-            while(currentResult!=null){
-                println currentResult['term']+":("+currentResult['lineNumber']+","+currentResult['start']+")"
-                currentResult=currentResult.next
-            }
-            File file=new File(result['document'])
-            processFileInplace(file) { text ->
-                text.replaceAll('doug cutting', 'doug cutting')
-            }
-          
-            copy(file,new File(file.getParent()+"/_bak_"+(int)System.currentTimeMillis()/1000+"_"+file.getName()))
+    def processResults(def results,def searchString,def replaceString,def outputFile){
+        def changedFiles=new HashSet()
+        for(currentResult in results){
+            println 'Search String \''+searchString+'\' found at lineNumber: '+currentResult['lineNumber']+' columnNumber: '+currentResult['start']+' in document:' +currentResult['document']
+            //            while(currentResult!=null){
+            //                println currentResult['term']+":("+currentResult['lineNumber']+","+currentResult['start']+")"
+            //                currentResult=currentResult.next
+            //            }
+            changedFiles.add(currentResult['document'])
+           
         }
+        if(replaceString!=null){
+            replace(changedFiles,searchString,replaceString)
+        }
+        
+        if(outputFile!=null){
+            outputChangedFiles(changedFiles,outputFile);
+        }
+    }
+    
+    def outputChangedFiles(def changedFiles,def outputFile){
+        File file = new File(outputFile)
+
+        changedFiles.each {
+            file << it+"\n"
+        }
+    }
+    
+    
+    def replace(def changedFiles,def searchString,def replaceString){
+        for(eachFile in changedFiles){
+            File file=new File(eachFile)
+            copy(file,new File(file.getParent()+"/_bak_"+new Long(System.currentTimeMillis())+"_"+file.getName()))
+            processFileInplace(file) { text ->
+                text.replaceAll(searchString, replaceString)
+            }
+        }
+    }
+    
+    def processResults(def results,def searchString,def replaceString){
+        processResults(results,searchString,replaceString,null)
     }
 }
 
