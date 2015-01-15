@@ -10,7 +10,9 @@ package search
  *
  * @author puneetkhanal
  */
-class Posting {
+import java.io.Serializable;
+
+class Posting implements Serializable{
 	
     def term
     def document
@@ -18,6 +20,8 @@ class Posting {
     def end
     def next
     def lineNumber;
+    def lastWordInLine
+    def firstWordInLine
     
 }
 

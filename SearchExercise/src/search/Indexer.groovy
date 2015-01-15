@@ -10,11 +10,18 @@ package search
  *
  * @author puneetkhanal
  */
+import org.apache.log4j.*
+import groovy.util.logging.*
+
+@Log4j
 class Indexer {
 
-    def map=["":""]
+    def map
     
     def index(def arg){
+        if(map==null){
+            map=new HashMap()
+        }
         if(map[arg['term']]==null){
             map[arg["term"]]=[arg]
         }else{
@@ -25,34 +32,45 @@ class Indexer {
     def search(def searchText){
         def terms=searchText.split(" ")
         def firstPostingsList=map[terms[0]]
-        def currentPosting
         def results=[]
+        def previousPosting
         for(posting in firstPostingsList){
-            currentPosting=posting
-            def i=1;
-            for(;i<terms.size();i++){
-                def eachPostingsList=map[terms[i]]
+            previousPosting=posting
+            def index=1;
+            for(;index<terms.size();index++){
+                def eachPostingsList=map[terms[index]]
                 def match=false
                 for(eachPosting in eachPostingsList){
-//                    println currentPosting['document']+":"+eachPosting['document']
-                    if(currentPosting['document']==eachPosting['document']&&currentPosting['end']+2==eachPosting['start']){
+                    if(isSameDocument(previousPosting,eachPosting)&&isNeighbor(previousPosting,eachPosting)){
                         match=true;
-                        currentPosting.setNext(eachPosting)
-                        currentPosting=eachPosting
+                        previousPosting.setNext(eachPosting)
+                        previousPosting=eachPosting
                         break
                     }
                 }
                 if(!match){
                     break;
                 }
-               
             }
-            if(i==terms.size()){
+            if(index==terms.size()){
                 results.add(posting);
             }
         }
-        
         return results
+    }
+    
+    def isSameDocument(def previousPosting,def eachPosting){
+        return previousPosting['document'].equals(eachPosting['document'])
+    }
+    
+    def isNeighbor(def previousPosting,def eachPosting){
+        if(previousPosting['end']+2==eachPosting['start']){
+            return true;
+        }else if(previousPosting['lastWordInLine']&&eachPosting['firstWordInLine']&&previousPosting['lineNumber']+1==eachPosting['lineNumber']){
+            return true;
+        }else{
+            return false;
+        }
     }
     
 }

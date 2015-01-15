@@ -12,6 +12,10 @@ package search
  */
 import groovy.io.FileType
 
+import org.apache.log4j.*
+import groovy.util.logging.*
+
+@Log4j
 class FileReader {
     
     def indexService
@@ -32,15 +36,17 @@ class FileReader {
         def lineNumber=0
         def fileName=new String(file.getName())
         if(!fileName.startsWith("_bak")){
-            file.eachLine { line -> readLine(path,line,lineNumber++) }
+            file.eachLine { line -> readLine(path,line.trim(),lineNumber++) }
         
         }
     }
     
     def readLine(def path,def line,def lineNumber){
-        def words=line.split(' ')
+        // remove extra whitespace
+        def words=line.replaceAll("\\s+", " ").split(' ')
         def postings=[]
         def start=0;
+        
         for(word in words){
             def posting=new Posting()
             posting.setStart(start)
@@ -54,6 +60,10 @@ class FileReader {
             }
             postings.add(posting)
         }
+        // mark first and second word for deteting text over line break
+        postings.getAt(0)["firstWordInLine"]=true
+        postings.getAt(words.size()-1)["lastWordInLine"]=true
+        
         return postings
     }
     
@@ -75,13 +85,8 @@ class FileReader {
     def processResults(def results,def searchString,def replaceString,def outputFile){
         def changedFiles=new HashSet()
         for(currentResult in results){
-            println 'Search String \''+searchString+'\' found at lineNumber: '+currentResult['lineNumber']+' columnNumber: '+currentResult['start']+' in document:' +currentResult['document']
-            //            while(currentResult!=null){
-            //                println currentResult['term']+":("+currentResult['lineNumber']+","+currentResult['start']+")"
-            //                currentResult=currentResult.next
-            //            }
+            log.info 'Search String \''+searchString+'\' found at lineNumber: '+currentResult['lineNumber']+' columnNumber: '+currentResult['start']+' in document:' +currentResult['document']
             changedFiles.add(currentResult['document'])
-           
         }
         if(replaceString!=null){
             replace(changedFiles,searchString,replaceString)
@@ -94,7 +99,6 @@ class FileReader {
     
     def outputChangedFiles(def changedFiles,def outputFile){
         File file = new File(outputFile)
-
         changedFiles.each {
             file << it+"\n"
         }
@@ -106,10 +110,11 @@ class FileReader {
             File file=new File(eachFile)
             copy(file,new File(file.getParent()+"/_bak_"+new Long(System.currentTimeMillis())+"_"+file.getName()))
             processFileInplace(file) { text ->
-                text.replaceAll(searchString, replaceString)
+                text.replaceAll(QueryProcessor.preProcessForReplace(searchString), replaceString)
             }
         }
     }
+    
     
     def processResults(def results,def searchString,def replaceString){
         processResults(results,searchString,replaceString,null)

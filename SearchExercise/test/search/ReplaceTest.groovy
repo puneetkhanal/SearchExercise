@@ -41,7 +41,7 @@ class ReplaceTest {
     public void replaceTest(){
         def file=new File('data/test1')
         processFileInplace(file) { text ->
-            text.replaceAll('lucene', 'lucenes')
+            text.replaceAll('doug\\s+cutting', 'lucenes')
         }
     }
     

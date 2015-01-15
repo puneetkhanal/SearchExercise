@@ -72,10 +72,10 @@ class FileReaderTest {
         def indexService=new Indexer()
         fileReader.setIndexService(indexService)
         fileReader.readFromDirectory('data')
-        def searchString='doug cutting'
+        def searchString='doug cuttings'
         def results=indexService.search(searchString)
         
-        fileReader.processResults(results,searchString,'doug cuttings','data/changedFiles.txt')
+        fileReader.processResults(results,searchString,'doug cutting','data/changedFiles.txt')
     }
     
     
