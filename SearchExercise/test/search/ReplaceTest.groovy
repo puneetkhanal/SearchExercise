@@ -17,25 +17,6 @@ import static org.junit.Assert.*
  * @author puneetkhanal
  */
 class ReplaceTest {
-
-    public ReplaceTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
     
     @Test
     public void replaceTest(){
@@ -50,9 +31,4 @@ class ReplaceTest {
         
         file.write(processText(text))
     }
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
 }

@@ -22,61 +22,40 @@ import static org.junit.Assert.*
 class FileReaderTest {
 
    
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-    
-    //    @Test
-    //    public void lineReaderTest(){
-    //        def fileReader=new FileReader()
-    //        def postings=fileReader.readLine("This is fun",1)
-    //        def indexer=new Indexer();
-    //        for(posting in postings){
-    //            println posting['term'] + ":"+posting['start']+":"+posting['end']
-    //            indexer.index(posting)
-    //        }
-    //        def results=indexer.search("This is fun")
-    //    }
-    //    
-    //    
-    //    @Test
-    //    public void fileReaderTest(){
-    //        def fileReader=new FileReader()
-    //        fileReader.readFile('data/test1')
-    //    }
-    //    
-    //    
-    //     @Test
-    //    public void directoryReaderTest(){
-    //        def fileReader=new FileReader()
-    //        fileReader.readFromDirectory('data')
-    //    }
-    //    
-    
     @Test
-    public void indexServiceTest(){
+    public void lineReaderTest(){
         def fileReader=new FileReader()
-        def indexService=new Indexer()
-        fileReader.setIndexService(indexService)
-        fileReader.readFromDirectory('data')
-        def searchString='doug cuttings'
-        def results=indexService.search(searchString)
+        def postings=fileReader.readLine('',"This is fun",1)    
+        def indexer=new Indexer();
+        for(posting in postings)
+        {
+            indexer.index(posting)
+        }
+        def results=indexer.search("This is fun")
         
-        fileReader.processResults(results,searchString,'doug cutting','data/changedFiles.txt')
+        assertEquals('This',results[0]['term'])
+        assertEquals('is',results[0].next['term'])
+        assertEquals('fun',results[0].next.next['term'])
     }
+        
+        
+    @Test
+    public void fileReaderTest(){
+        def fileReader=new FileReader()
+        fileReader.readFile('data/test1')
+    }
+        
+        
+    @Test
+    public void directoryReaderTest(){
+        def fileReader=new FileReader()
+        def list=fileReader.readFromDirectory('data')
+        println list
+        println list.contains("data\test1")
+        assertTrue(list.size()>0)
+    }
+        
+
     
     
 }

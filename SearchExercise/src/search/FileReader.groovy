@@ -21,6 +21,7 @@ class FileReader {
     def indexService
 	
     def readFromDirectory(def directoryPath){
+        
         def list = []
         def dir = new File(directoryPath)
         dir.eachFileRecurse (FileType.FILES) { file ->
@@ -29,15 +30,20 @@ class FileReader {
         list.each {
             readFile(it.path)
         }
+        
     }
     
     def readFile(def path){
-        def file = new File(path)
-        def lineNumber=0
-        def fileName=new String(file.getName())
-        if(!fileName.startsWith("_bak")){
-            file.eachLine { line -> readLine(path,line.trim(),lineNumber++) }
+        try{
+            def file = new File(path)
+            def lineNumber=0
+            def fileName=new String(file.getName())
+            if(!fileName.startsWith("_bak")){
+                file.eachLine { line -> readLine(path,line.trim(),lineNumber++) }
         
+            }
+        }catch(Exception e){
+            log.error 'Error occurred:' +e.getMessage()
         }
     }
     
@@ -51,7 +57,7 @@ class FileReader {
             def posting=new Posting()
             posting.setStart(start)
             posting.setEnd(start+word.length())
-            posting.setTerm(word)
+            posting.setTerm(word.toLowerCase())
             posting.setDocument(path)
             posting.setLineNumber(lineNumber)
             start=start+word.length()+2
@@ -99,6 +105,7 @@ class FileReader {
     
     def outputChangedFiles(def changedFiles,def outputFile){
         File file = new File(outputFile)
+
         changedFiles.each {
             file << it+"\n"
         }
@@ -108,8 +115,10 @@ class FileReader {
     def replace(def changedFiles,def searchString,def replaceString){
         for(eachFile in changedFiles){
             File file=new File(eachFile)
-            copy(file,new File(file.getParent()+"/_bak_"+new Long(System.currentTimeMillis())+"_"+file.getName()))
-            processFileInplace(file) { text ->
+            File destFile=new File(file.getParent()+"/_bak_"+new Long(System.currentTimeMillis())+"_"+file.getName());
+            copy(file,destFile)
+            log.info 'File ' + file.getName()+ ' is backed up to '+ destFile.getPath()
+            processFileInplace(file) { text ->   
                 text.replaceAll(QueryProcessor.preProcessForReplace(searchString), replaceString)
             }
         }

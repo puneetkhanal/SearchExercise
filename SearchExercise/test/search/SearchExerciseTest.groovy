@@ -6,20 +6,27 @@
 
 package search
 
+import org.junit.After
+import org.junit.AfterClass
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
+import static org.junit.Assert.*
+
 /**
  *
  * @author puneetkhanal
  */
-
 
 import org.apache.log4j.*
 import groovy.util.logging.*
 import org.mapdb.*;
 
 @Log4j
-class SearchExercise {
-	
-    def execute(def args){
+class SearchExerciseTest {
+
+    @Test
+    public void searchExerciseTest(){
         def fileReader=new FileReader()
         def indexService=new Indexer()
         def searchString='doug cuttings'
@@ -42,10 +49,4 @@ class SearchExercise {
         
         fileReader.processResults(results,searchString,'doug','data/changedFiles.txt')
     }
-    
-    static main(def args){
-        def searchExercise=new SearchExercise()
-        searchExercise.execute(args)
-    }
 }
-

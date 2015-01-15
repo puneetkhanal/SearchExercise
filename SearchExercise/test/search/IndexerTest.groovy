@@ -24,23 +24,28 @@ class IndexerTest {
     public IndexerTest() {
     }
     
-    //    @Test
-    //    public void indexTest(){
-    //        def indexer=new Indexer();
-    //        indexer.index(createIncident(1,"hi",1,2))
-    //        indexer.index(createIncident(1,"hello",1,2))
-    //    }
+    @Test
+    public void indexTest(){
+        def indexer=new Indexer();
+        indexer.index(createPosting(1,"hi",1,2))
+        indexer.index(createPosting(1,"hello",1,2))
+        
+        assertNotNull(indexer.getMap()['hi'])
+        assertNotNull(indexer.getMap()['hello'])
+    }
     
     
     @Test
-    public void searchTest(){
+    public void simpleSearchTest(){
         def indexer=new Indexer();
         indexer.index(createPosting(1,"hi",0,1))
-        //        indexer.index(createIncident(2,"hi",1,2))
         indexer.index(createPosting(1,"hello",3,7))
-        indexer.index(createPosting(1,"puneet",9,14))
+        indexer.index(createPosting(1,"lucene",3,7))
         
-        indexer.search("hi hello puneet")
+        def results=indexer.search("hi hello")
+        assertNotNull(results[0])
+        assertEquals('hi',results[0]['term'])
+        assertEquals('hello',results[0].next['term'])
     }
     
     
