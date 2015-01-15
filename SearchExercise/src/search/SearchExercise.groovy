@@ -25,9 +25,19 @@ class SearchExercise {
         def searchString='doug'
         indexService.setMap(DBMaker.newTempTreeMap())
         searchString=QueryProcessor.parseQuery(searchString);
+        
+        def currentTime=System.currentTimeMillis()
+        
         fileReader.setIndexService(indexService)
         fileReader.readFromDirectory('data');
+        
+        log.info 'total indexing time: '+(System.currentTimeMillis()-currentTime)+' ms'
+        
+        currentTime=System.currentTimeMillis()
         def results=indexService.search(searchString)
+       
+        log.info 'total search time: '+(System.currentTimeMillis()-currentTime)+' ms'
+        
         fileReader.processResults(results,searchString,'doug','data/changedFiles.txt')
     }
     static main(def args){
