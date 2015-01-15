@@ -14,14 +14,21 @@ import java.io.Serializable;
 
 class Posting implements Serializable{
 	
-    def term
+    //individual word
+    def term 
+    //file
     def document
-    def start
-    def end
-    def next
-    def lineNumber;
-    def lastWordInLine
-    def firstWordInLine
+    //startPosition of a word
+    def start 
+    //endPosition of a word
+    def end  
+    // pointer to next word
+    def next  
+    def lineNumber
+    // boolean flag to indicate last word in line
+    def lastWordInLine 
+    // boolean flag to indicate first word in a line
+    def firstWordInLine 
     
 }
 

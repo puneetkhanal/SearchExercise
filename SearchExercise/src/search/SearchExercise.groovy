@@ -29,7 +29,7 @@ class SearchExercise {
         def basePath=args[0]
         def searchString=args[1]
         def replaceString
-        if(args.size()==3){
+        if(args.size()<=4){
             replaceString=args[2]
         }
         def outputfile
@@ -37,27 +37,28 @@ class SearchExercise {
             outputfile=args[3]
         }
         
-        // inject map db for persistable map
+        // inject map db for persistence map
         indexService.setMap(DBMaker.newTempTreeMap())
         searchString=QueryProcessor.parseQuery(searchString);
         
         def currentTime=System.currentTimeMillis()
         
         fileReader.setIndexService(indexService)
-        fileReader.readFromDirectory('data');
+        fileReader.readFromDirectory(basePath);
         
-        log.info 'total indexing time: '+(System.currentTimeMillis()-currentTime)+' ms'
+        log.info 'Total indexing time: '+(System.currentTimeMillis()-currentTime)+' ms'
         
         currentTime=System.currentTimeMillis()
         def results=indexService.search(searchString)
        
-        log.info 'total search time: '+(System.currentTimeMillis()-currentTime)+' ms'
+        log.info 'Total search time: '+(System.currentTimeMillis()-currentTime)+' ms'
         
         if(replaceString==null){
             fileReader.processResults(results,searchString)
         }else if(outputfile==null){
             fileReader.processResults(results,searchString,replaceString)
         }else{
+            log.info outputfile
             fileReader.processResults(results,searchString,replaceString,outputfile)
         }
     }
