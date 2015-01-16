@@ -25,7 +25,7 @@ class QueryProcessor {
         def i=0;
         for(;i<terms.size();i++){
             if(i<terms.size()-1){
-                strBuilder.append(terms.getAt(i)+"\\s+")
+                strBuilder.append(terms.getAt(i))
             }else{
                 strBuilder.append(terms.getAt(i));
             }

@@ -33,17 +33,20 @@ class FileReader {
     }
     
     def readFile(def path){
-        try{
-            def file = new File(path)
-            def lineNumber=0
-            def fileName=new String(file.getName())
-            if(!fileName.startsWith("_bak")){
-                file.eachLine { line -> readLine(path,line.trim(),lineNumber++) }
-        
+        def file = new File(path)
+        def lineNumber=0
+        def fileName=new String(file.getName())
+        if(!fileName.startsWith("_bak")){
+            file.eachLine { line -> 
+                try{
+                    readLine(path,line.trim(),lineNumber++) 
+                }catch(Exception e){
+                    log.error 'Error occurred:' +e.getMessage() + ' when reading lineNumber: ' +lineNumber+' from path '+ path
+                }
             }
-        }catch(Exception e){
-            log.error 'Error occurred:' +e.getMessage()
+        
         }
+        
     }
     
     def readLine(def path,def line,def lineNumber){
@@ -102,13 +105,14 @@ class FileReader {
             replace(changedFiles,searchString,replaceString)
         }
         
-        if(outputFile!=null){
+        if(outputFile!=null&&changedFiles.size()>0){
             outputChangedFiles(changedFiles,outputFile);
         }
     }
     
     def outputChangedFiles(def changedFiles,def outputFile){
         File file = new File(outputFile)
+        log.info "Changed file information logged in file "+ file.getPath()
         changedFiles.each {
             file << it+"\n"
         }

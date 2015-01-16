@@ -29,7 +29,7 @@ class SearchExercise {
         def basePath=args[0]
         def searchString=args[1]
         def replaceString
-        if(args.size()<=4){
+        if(args.size()>=3){
             replaceString=args[2]
         }
         def outputfile
