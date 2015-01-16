@@ -119,8 +119,10 @@ class FileReader {
             File destFile=new File(file.getParent()+"/_bak_"+new Long(System.currentTimeMillis())+"_"+file.getName());
             copy(file,destFile)
             log.info 'File ' + file.getName()+ ' is backed up to '+ destFile.getPath()
-            processFileInplace(file) { text ->   
-                text.replaceAll(QueryProcessor.preProcessForReplace(searchString), replaceString)
+            processFileInplace(file) { text ->  
+                if(text!=null){
+                    text.replaceAll(QueryProcessor.preProcessForReplace(searchString), " "+replaceString)
+                }
             }
         }
     }

@@ -15,7 +15,7 @@ class QueryProcessor {
     static def preProcessForReplace(def searchString){
         def terms=searchString.split(' ')
         // (?i) for case insensitve replacing
-        def strBuilder=new StringBuilder('(?i)')
+        def strBuilder=new StringBuilder('(?i)\\s+')
         def i=0;
         for(;i<terms.size();i++){
             if(i<terms.size()-1){
